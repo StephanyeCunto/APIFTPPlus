@@ -3,30 +3,28 @@ import os
 import shutil
 
 def servidor():
-    host = 'localhost'  # Endereço IP do servidor
-    porta = 12345  # Porta que o servidor vai escutar
+    host = 'localhost'  
+    porta = 12345  
 
-    # Garante que o diretório de arquivos exista
     if not os.path.exists('./arquivos'):
         os.makedirs('./arquivos')
 
-    # Cria o socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, porta))
-    s.listen(5)  # Permite até 5 conexões simultâneas
+    s.listen(5)
 
     print(f'Servidor escutando na porta {porta}')
 
     while True:
-        conn, addr = s.accept()  # Aceita uma conexão
+        conn, addr = s.accept()  
         print(f'Conexão estabelecida com {addr}')
 
         try:
-            comando = conn.recv(1024).decode()  # Recebe o comando do cliente
+            comando = conn.recv(1024).decode() 
 
             if comando == "listar":
-                arquivos = os.listdir('./arquivos')  # Lista os arquivos no diretório
-                conn.send(str(arquivos).encode())  # Envia a lista de arquivos para o cliente
+                arquivos = os.listdir('./arquivos')  
+                conn.send(str(arquivos).encode()) 
 
             elif comando.startswith("excluir"):
                 nome_do_arquivo = comando.split(' ')[1]
@@ -44,7 +42,7 @@ def servidor():
                 nome_do_arquivo = comando.split(' ', 1)[1]
                 caminho_destino = os.path.join('./arquivos', nome_do_arquivo)
 
-                conn.send("OK".encode())  # Confirmação para o cliente
+                conn.send("OK".encode())  
 
                 with open(caminho_destino, 'wb') as arquivo:
                     while True:
@@ -64,8 +62,8 @@ def servidor():
                     conn.close()
                     continue
 
-                conn.send("OK".encode())  # Confirmação inicial
-                resposta = conn.recv(1024).decode()  # Aguarda resposta do cliente
+                conn.send("OK".encode())
+                resposta = conn.recv(1024).decode()  
 
                 if resposta != "Pronto para receber":
                     conn.close()
@@ -78,7 +76,7 @@ def servidor():
                             break
                         conn.send(dados)
 
-                conn.send(b"EOF")  # Indica o fim do arquivo
+                conn.send(b"EOF") 
 
             else:
                 conn.send("Comando não reconhecido".encode())
@@ -87,7 +85,7 @@ def servidor():
             print(f"Erro durante a conexão: {e}")
 
         finally:
-            conn.close()  # Fecha a conexão
+            conn.close() 
 
 if __name__ == "__main__":
     servidor()

@@ -1,96 +1,137 @@
-# FTPPlus API
+# FTP Plus API 📂🌐
 
-A **FTPPlus** é uma API cliente-servidor para gerenciamento de arquivos, permitindo operações como listar, enviar, excluir e baixar arquivos de um servidor. A API implementa boas práticas de segurança, incluindo sanitização de dados, para garantir a integridade e proteção contra vulnerabilidades.
+## 📚 Trabalho Acadêmico - Redes de Computadores
 
-[![wakatime](https://wakatime.com/badge/user/5a343522-23db-45ae-b20b-54655c392390/project/59187e51-ff5e-49c3-a860-7224598ac2a0.svg)](https://wakatime.com/badge/user/5a343522-23db-45ae-b20b-54655c392390/project/59187e51-ff5e-49c3-a860-7224598ac2a0)
+### 🌐 Visão Geral
+O FTP Plus é uma solução de transferência de arquivos desenvolvida em Python como projeto prático para a disciplina de Redes de Computadores, projetada para demonstrar conceitos fundamentais de comunicação cliente-servidor em redes locais.
 
-## Comandos Disponíveis
+![Wakatime](https://wakatime.com/badge/user/5a343522-23db-45ae-b20b-54655c392390/project/59187e51-ff5e-49c3-a860-7224598ac2a0.svg)
 
-- **listar**: Lista os arquivos disponíveis no servidor.
-- **enviar `<arquivo>`**: Envia um arquivo para o servidor.
-- **excluir `<arquivo>`**: Exclui um arquivo do servidor.
-- **baixar `<arquivo>`**: Faz o download de um arquivo do servidor.
+## 🎯 Objetivo Acadêmico
 
-## Exemplo de Uso
+### Objetivos Principais
+- Demonstrar implementação prática de comunicação via sockets
+- Desenvolver uma aplicação cliente-servidor segura
+- Explorar técnicas de transferência de arquivos em redes locais
+- Aplicar conceitos de segurança em comunicações de rede
 
-1. **Iniciar o Servidor:**
-   Antes de executar o cliente, inicie o servidor Python:
-   ```bash
-   python servidor.py
-   
-2. Comandos do Cliente: O cliente pode executar os seguintes comandos para interagir com o servidor:
-Listar arquivos: Para listar os arquivos disponíveis no servidor, execute o comando:
-   ```bash
-    python client.py <ip-do-servidor> "listar"
-   ```
-	Exemplo de resposta:
-	```bash
-   { "status": "success", "data": ["arquivo1.txt", "arquivo2.pdf"] }
-   ```
+## 🌟 Recursos e Conceitos Técnicos
 
-	Excluir arquivo:
-		Para excluir um arquivo do servidor, execute o comando:
-	```bash
-	python client.py <ip-do-servidor> "excluir arquivo.txt"
-	```
-	Exemplo de resposta:
-	```bash
-	{ "status": "success", "message": "arquivo.txt excluído" }
-	```
-	Enviar arquivo: Para enviar um arquivo para o servidor, execute o comando:
-	  ```bash
-	python client.py <ip-do-servidor> "enviar arquivo.txt"
-   ```
-	Exemplo de resposta:
-   ```bash
-	{ "status": "success", "message": "arquivo.txt enviado com sucesso" }
-	```
-	Baixar arquivo: Para baixar um arquivo do servidor, execute o comando:
-   ```bash
-	python client.py <ip-do-servidor> "baixar arquivo.txt"
-	```
-	Exemplo de resposta:
-	  ```bash
-	{ "status": "success", "message": "arquivo.txt salvo com sucesso"}
-	```
+### 🔐 Segurança de Rede
+- **Sanitização Avançada**: Proteção contra injeção de comandos
+- **Validação Rigorosa de Entrada**: Bloqueia caracteres especiais
+- **Proteção contra Path Traversal**: Previne acesso não autorizado
+- **Tratamento Controlado de Erros**: Mensagens de erro seguras
 
-	 ---
+### 🚀 Funcionalidades Implementadas
+- Listar arquivos
+- Enviar arquivos
+- Baixar arquivos
+- Excluir arquivos
 
-## Sanitização de Dados
+## 📦 Requisitos Técnicos
 
-A **FTPPlus API** adota práticas rigorosas de sanitização de dados para garantir que as entradas dos usuários sejam seguras e evitar vulnerabilidades de segurança, como injeção de comandos e ataques de caminho. As principais medidas incluem:
+### Ambiente de Desenvolvimento
+- **Linguagem**: Python 3.7+
+- **Sistemas Operacionais Compatíveis**: 
+  - Windows 10/11
+  - macOS 10.14+
+  - Linux (Ubuntu 18.04+)
 
-- **Validação de Arquivos:**
-  - Nomes de arquivos são validados para bloquear caracteres especiais ou sequências perigosas, como `../../`, que podem permitir acesso não autorizado a pastas ou arquivos fora do diretório permitido.
-  - Apenas arquivos com nomes válidos e dentro das restrições do sistema de arquivos são aceitos.
+### Bibliotecas Utilizadas
+- `socket`: Comunicação de rede
+- `os`: Manipulação de arquivos e sistemas
+- `sys`: Interações com o sistema
+- `json`: Formatação de respostas
+- `re`: Validação e sanitização de entrada
 
-- **Comandos Reconhecidos:**
-  - A API valida os comandos recebidos e assegura que apenas comandos pré-definidos e reconhecidos (como `listar`, `enviar`, `excluir`, `baixar`) sejam processados.
-  - Comandos desconhecidos ou malformados são rejeitados, prevenindo tentativas de injeção maliciosa.
+## 🔧 Configuração e Instalação
 
-- **Mensagens de Erro Claras:**
-  - Quando ocorre um erro, a resposta do servidor fornece mensagens claras e específicas, como:
-    ```json
-    { "status": "error", "message": "Arquivo não encontrado" }
-    ```
-  - Mensagens de erro são projetadas para evitar vazamento de informações internas ou detalhes que possam ser usados para explorar o sistema.
+### Preparação do Ambiente
+```bash
+# Clonar o repositório
+git clone https://github.com/seu-usuario/ftpplus.git
+cd ftpplus
 
-- **Escapamento de Entrada:**
-  - Todos os dados fornecidos pelo cliente (como nomes de arquivos) são devidamente escapados antes de serem processados, evitando que caracteres especiais sejam interpretados de maneira insegura.
+# Configurar ambiente virtual (recomendado)
+python3 -m venv venv
+source venv/bin/activate  # Ativar ambiente virtual
+```
 
-Essas práticas são implementadas para proteger tanto o servidor quanto os clientes, mantendo a comunicação segura e protegida contra ataques comuns.
+## 💻 Execução do Projeto
 
----
+### Iniciar Servidor
+```bash
+python servidor.py
+```
 
-## Licença
+### Executar Cliente
+```bash
+# Sintaxe geral
+python client.py <host> <comando>
 
-Este projeto está licenciado sob a **MIT License**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+# Exemplos:
+python client.py localhost "listar"
+python client.py localhost "enviar arquivo.txt"
+python client.py localhost "excluir arquivo.txt"
+python client.py localhost "download arquivo.txt"
+```
 
-### Resumo da Licença MIT
+## 🔬 Aspectos Técnicos Detalhados
 
-A Licença MIT permite que você faça o que desejar com o código, incluindo copiar, modificar, mesclar, publicar, distribuir, sublicenciar e/ou vender cópias do Software, desde que a permissão seja fornecida de acordo com os termos seguintes:
+### Arquitetura de Rede
+- **Protocolo**: Socket TCP/IP
+- **Porta Padrão**: 12345
+- **Escopo**: Rede local
+- **Modelo**: Cliente-Servidor
 
-- O aviso de copyright e a permissão nesta nota devem ser incluídos em todas as cópias ou partes substanciais do Software.
-- O Software é fornecido "como está", sem garantia de qualquer tipo, expressa ou implícita, incluindo, mas não se limitando a garantias de comercialização ou adequação a um fim específico.
+### Características de Implementação
+- Comunicação via sockets
+- Transferência segura de arquivos
+- Tratamento de erros de rede
+- Validação de entrada
 
-Esta licença permite que você use o software para qualquer propósito, mas isenta os desenvolvedores de qualquer responsabilidade ou danos decorrentes do uso do código.
+## 📋 Exemplos de Comunicação
+
+### Resposta de Sucesso
+```json
+{
+  "status": "success", 
+  "message": "arquivo.txt enviado com sucesso",
+  "timestamp": "2024-02-03T15:30:45Z"
+}
+```
+
+### Resposta de Erro
+```json
+{
+  "status": "error", 
+  "message": "Arquivo não encontrado",
+  "code": 404
+}
+```
+
+## ⚠️ Limitações do Projeto
+
+### Restrições Atuais
+- Funcionamento em rede local
+- Sem autenticação avançada
+- Transferências limitadas a 1GB
+- Sem suporte a transferências simultâneas
+
+## 🎓 Aprendizados Acadêmicos
+
+### Conceitos Explorados
+- Programação de sockets
+- Protocolos de comunicação
+- Segurança em redes
+- Tratamento de conexões
+- Manipulação de arquivos em rede
+
+## 📄 Licença
+Projeto acadêmico para disciplina de Redes de Computadores
+
+**Nota**: Desenvolvido exclusivamente para fins educacionais, não recomendado para uso em produção sem adaptações.
+
+## 🏷️ Versão
+`v1.0.0` - Versão inicial do trabalho acadêmico

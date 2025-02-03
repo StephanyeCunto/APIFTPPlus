@@ -55,7 +55,7 @@ def cliente():
                         break
                     s.send(dados)
 
-            s.send(b"EOF")  # Indica o fim do arquivo
+            s.send(b"EOF") 
             print(s.recv(1024).decode())
 
         elif comando.startswith("download"):
