@@ -1,34 +1,52 @@
-# Importando os módulos necessários
 import socket
 import sys
+import os
 
-# Função para criar o cliente
-def client(ip_do_servidor, comando, nome_do_arquivo=None):
+def client(ip_do_servidor, comando, caminho_arquivo=None):
+    # Cria o socket
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((ip_do_servidor, 12345))  # Conecta ao servidor na porta 12345
-
+    
     try:
-        s.sendall(comando.encode())  # Envia o comando para o servidor
+        # Conecta ao servidor na porta 12345
+        s.connect((ip_do_servidor, 12345))
 
-        if comando == "enviar" and nome_do_arquivo:
-            with open(nome_do_arquivo, 'rb') as f:
-                for data in f:
-                    s.sendall(data)
+        # Lógica de envio de comando diferente para cada tipo de operação
+        if comando == "enviar" and caminho_arquivo:
+            # Verifica se o arquivo existe
+            if not os.path.exists(caminho_arquivo):
+                print(f"Erro: Arquivo {caminho_arquivo} não existe.")
+                return
+            
+            # Envia o comando de envio com o caminho completo do arquivo
+            s.sendall(f"enviar {caminho_arquivo}".encode())
 
-        elif comando == "listar":
-            print("Listando arquivos...")
+        else:
+            # Para comandos como listar e excluir
+            s.sendall(comando.encode())
 
-        elif comando.startswith("excluir"):
-            print(f"Excluindo o arquivo {nome_do_arquivo}...")
-
-        resposta = s.recv(1024)  # Recebe a resposta do servidor
+        # Recebe a resposta do servidor
+        resposta = s.recv(1024)
         print('Resposta:', resposta.decode())
-    finally:
-        s.close()  # Fecha a conexão
 
-# Função principal para executar o cliente
-if __name__ == "__main__":
+    except ConnectionRefusedError:
+        print("Erro: Não foi possível conectar ao servidor.")
+    except Exception as e:
+        print(f"Erro: {e}")
+    finally:
+        # Fecha a conexão
+        s.close()
+
+def main():
+    # Verifica os argumentos de linha de comando
+    if len(sys.argv) < 3:
+        print("Uso: python cliente.py <ip_do_servidor> <comando> [caminho_do_arquivo]")
+        sys.exit(1)
+
     ip_do_servidor = sys.argv[1]  # O IP do servidor é o primeiro argumento
     comando = sys.argv[2]  # O comando é o segundo argumento
-    nome_do_arquivo = sys.argv[3] if len(sys.argv) > 3 else None  # O nome do arquivo é o terceiro argumento, se existir
-    client(ip_do_servidor, comando, nome_do_arquivo)
+    caminho_arquivo = sys.argv[3] if len(sys.argv) > 3 else None  # O caminho do arquivo é o terceiro argumento, se existir
+
+    client(ip_do_servidor, comando, caminho_arquivo)
+
+if __name__ == "__main__":
+    main()

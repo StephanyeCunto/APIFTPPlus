@@ -2,6 +2,8 @@
 
 A **FTPPlus** é uma API cliente-servidor para gerenciamento de arquivos, permitindo operações como listar, enviar, excluir e baixar arquivos de um servidor. A API implementa boas práticas de segurança, incluindo sanitização de dados, para garantir a integridade e proteção contra vulnerabilidades.
 
+[![wakatime](https://wakatime.com/badge/user/5a343522-23db-45ae-b20b-54655c392390/project/59187e51-ff5e-49c3-a860-7224598ac2a0.svg)](https://wakatime.com/badge/user/5a343522-23db-45ae-b20b-54655c392390/project/59187e51-ff5e-49c3-a860-7224598ac2a0)
+
 ## Comandos Disponíveis
 
 - **listar**: Lista os arquivos disponíveis no servidor.
