@@ -1,52 +1,92 @@
 import socket
-import sys
 import os
 
-def client(ip_do_servidor, comando, caminho_arquivo=None):
-    # Cria o socket
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
-    try:
-        # Conecta ao servidor na porta 12345
-        s.connect((ip_do_servidor, 12345))
+def cliente():
+    host = 'localhost'
+    porta = 12345
 
-        # Lógica de envio de comando diferente para cada tipo de operação
-        if comando == "enviar" and caminho_arquivo:
-            # Verifica se o arquivo existe
-            if not os.path.exists(caminho_arquivo):
-                print(f"Erro: Arquivo {caminho_arquivo} não existe.")
-                return
-            
-            # Envia o comando de envio com o caminho completo do arquivo
-            s.sendall(f"enviar {caminho_arquivo}".encode())
+    while True:
+        print("\n=== Comandos disponíveis ===")
+        print("1. listar -> Lista os arquivos disponíveis")
+        print("2. excluir <nome_do_arquivo> -> Exclui um arquivo no servidor")
+        print("3. enviar <caminho_do_arquivo> -> Envia um arquivo para o servidor")
+        print("4. download <nome_do_arquivo> -> Baixa um arquivo do servidor")
+        print("5. sair -> Fecha o cliente")
+        
+        comando = input("\nDigite o comando: ")
+        
+        if comando == "sair":
+            print("Encerrando conexão...")
+            break
+
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((host, porta))
+        s.send(comando.encode())
+
+        if comando == "listar":
+            resposta = s.recv(1024).decode()
+            print("Arquivos disponíveis:", resposta)
+
+        elif comando.startswith("excluir"):
+            resposta = s.recv(1024).decode()
+            print(resposta)
+
+        elif comando.startswith("enviar"):
+            caminho_completo = comando.split(' ', 1)[1]
+
+            if not os.path.exists(caminho_completo):
+                print("Erro: Arquivo não encontrado.")
+                s.close()
+                continue
+
+            nome_do_arquivo = os.path.basename(caminho_completo)
+            s.send(nome_do_arquivo.encode())
+
+            resposta = s.recv(1024).decode()
+            if resposta != "OK":
+                print("Erro no servidor.")
+                s.close()
+                continue
+
+            with open(caminho_completo, 'rb') as arquivo:
+                while True:
+                    dados = arquivo.read(1024)
+                    if not dados:
+                        break
+                    s.send(dados)
+
+            s.send(b"EOF")  # Indica o fim do arquivo
+            print(s.recv(1024).decode())
+
+        elif comando.startswith("download"):
+            nome_do_arquivo = comando.split(' ', 1)[1]
+            resposta = s.recv(1024).decode()
+
+            if resposta == "Erro: Arquivo não encontrado.":
+                print(resposta)
+                s.close()
+                continue
+
+            s.send("Pronto para receber".encode())
+
+            caminho_destino = os.path.join('./downloads', nome_do_arquivo)
+            if not os.path.exists('./downloads'):
+                os.makedirs('./downloads')
+
+            with open(caminho_destino, 'wb') as arquivo:
+                while True:
+                    dados = s.recv(1024)
+                    if dados == b"EOF":
+                        break
+                    arquivo.write(dados)
+
+            print(f"Download concluído: {caminho_destino}")
 
         else:
-            # Para comandos como listar e excluir
-            s.sendall(comando.encode())
+            resposta = s.recv(1024).decode()
+            print("Resposta do servidor:", resposta)
 
-        # Recebe a resposta do servidor
-        resposta = s.recv(1024)
-        print('Resposta:', resposta.decode())
-
-    except ConnectionRefusedError:
-        print("Erro: Não foi possível conectar ao servidor.")
-    except Exception as e:
-        print(f"Erro: {e}")
-    finally:
-        # Fecha a conexão
         s.close()
 
-def main():
-    # Verifica os argumentos de linha de comando
-    if len(sys.argv) < 3:
-        print("Uso: python cliente.py <ip_do_servidor> <comando> [caminho_do_arquivo]")
-        sys.exit(1)
-
-    ip_do_servidor = sys.argv[1]  # O IP do servidor é o primeiro argumento
-    comando = sys.argv[2]  # O comando é o segundo argumento
-    caminho_arquivo = sys.argv[3] if len(sys.argv) > 3 else None  # O caminho do arquivo é o terceiro argumento, se existir
-
-    client(ip_do_servidor, comando, caminho_arquivo)
-
 if __name__ == "__main__":
-    main()
+    cliente()
